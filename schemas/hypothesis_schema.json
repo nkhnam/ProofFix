@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Hypothesis",
+  "type": "object",
+  "required": [
+    "id",
+    "claim",
+    "causal_mechanism",
+    "observable_if_true",
+    "observable_if_false",
+    "experiment_template",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "enum": ["H1", "H2"],
+      "description": "Hypothesis identifier"
+    },
+    "claim": {
+      "type": "string",
+      "description": "Plain-English statement of what causes the bug"
+    },
+    "causal_mechanism": {
+      "type": "string",
+      "description": "Technical explanation of the causal chain"
+    },
+    "observable_if_true": {
+      "type": "string",
+      "description": "What experiment output would confirm this hypothesis"
+    },
+    "observable_if_false": {
+      "type": "string",
+      "description": "What experiment output would falsify this hypothesis"
+    },
+    "experiment_template": {
+      "type": "string",
+      "enum": ["disable_frontend_retry", "inject_backend_timeout"],
+      "description": "Which experiment template tests this hypothesis"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PENDING", "FALSIFIED", "SUPPORTED"],
+      "description": "Current hypothesis status — updated after experiment evidence is read"
+    },
+    "evidence_file": {
+      "type": ["string", "null"],
+      "description": "Path to the evidence JSON file that determined this status"
+    }
+  },
+  "additionalProperties": false
+}

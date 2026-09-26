@@ -1,0 +1,35 @@
+{
+  "experiment_id": "disable_frontend_retry_c9346f2f",
+  "hypothesis_id": "H1",
+  "template_name": "disable_frontend_retry",
+  "intervention": "MAX_RETRIES=0 \u2014 client sends payment request exactly once, no client-side retry",
+  "baseline": "Client retries payment on failure (MAX_RETRIES=1); service retry loop active",
+  "transactions_created": 2,
+  "duplicate_count": 1,
+  "retry_log_entries": [
+    "attempt 1: POST /charge payment_id=EXP-A-001",
+    "attempt 1: response status=200",
+    "attempt 2: POST /charge payment_id=EXP-A-001",
+    "attempt 2: response status=200"
+  ],
+  "backend_calls": 2,
+  "result": "FALSIFIED",
+  "reason": "H1 FALSIFIED: duplicate_count=1 even with client retry disabled (MAX_RETRIES=0). The service retry loop (SERVICE_RETRY_ON_TIMEOUT=1) still executed 2 backend calls, creating 2 transactions. Client retry behavior is NOT the root cause.",
+  "raw_evidence": [
+    {
+      "transaction_id": "0670ac18-cce7-466d-b4f7-0e2d185da5fc",
+      "payment_id": "EXP-A-001",
+      "amount": 50.0,
+      "status": "charged",
+      "created_at": 1790403472.3231685
+    },
+    {
+      "transaction_id": "339f0344-307e-47a3-99a4-65642cfd7f45",
+      "payment_id": "EXP-A-001",
+      "amount": 50.0,
+      "status": "charged",
+      "created_at": 1790403472.3244333
+    }
+  ],
+  "timestamp": "2026-09-26T06:17:52.325155+00:00"
+}

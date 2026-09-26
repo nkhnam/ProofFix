@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExperimentEvidence",
+  "type": "object",
+  "required": [
+    "experiment_id",
+    "hypothesis_id",
+    "template_name",
+    "intervention",
+    "baseline",
+    "transactions_created",
+    "duplicate_count",
+    "retry_log_entries",
+    "backend_calls",
+    "result",
+    "reason",
+    "timestamp"
+  ],
+  "properties": {
+    "experiment_id": {
+      "type": "string",
+      "description": "Unique ID for this experiment run"
+    },
+    "hypothesis_id": {
+      "type": "string",
+      "enum": ["H1", "H2"],
+      "description": "Which hypothesis this experiment tests"
+    },
+    "template_name": {
+      "type": "string",
+      "description": "Name of the experiment template used"
+    },
+    "intervention": {
+      "type": "string",
+      "description": "What was changed from the baseline for this experiment"
+    },
+    "baseline": {
+      "type": "string",
+      "description": "What the normal (unmodified) behavior is"
+    },
+    "transactions_created": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of transaction records in the store after the experiment"
+    },
+    "duplicate_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of excess transactions beyond expected (transactions_created - 1)"
+    },
+    "retry_log_entries": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Log of retry events observed during the experiment"
+    },
+    "backend_calls": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of calls made to the mock backend"
+    },
+    "result": {
+      "type": "string",
+      "enum": ["FALSIFIED", "SUPPORTED", "UNKNOWN"],
+      "description": "Outcome of the experiment with respect to the hypothesis"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Explanation of why the hypothesis was FALSIFIED or SUPPORTED"
+    },
+    "raw_evidence": {
+      "type": "array",
+      "items": {"type": "object"},
+      "description": "Raw transaction records from the store"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the experiment ran"
+    }
+  },
+  "additionalProperties": false
+}

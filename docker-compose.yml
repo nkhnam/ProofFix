@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  mock-backend:
+    build:
+      context: ./mock_backend
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - INJECT_TIMEOUT=${INJECT_TIMEOUT:-false}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+
+  payment-service:
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - BACKEND_URL=http://mock-backend:8001
+      - SERVICE_RETRY_ON_TIMEOUT=${SERVICE_RETRY_ON_TIMEOUT:-1}
+      - MAX_RETRIES=${MAX_RETRIES:-1}
+    depends_on:
+      mock-backend:
+        condition: service_healthy

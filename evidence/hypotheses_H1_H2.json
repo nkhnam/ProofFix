@@ -1,0 +1,22 @@
+[
+  {
+    "id": "H1",
+    "claim": "The duplicate is caused by frontend/client retry behavior.",
+    "causal_mechanism": "Client retries POST /payment with the same payment_id after a timeout. The service processes both requests independently.",
+    "observable_if_true": "Disabling client retry (MAX_RETRIES=0, single request) eliminates the duplicate.",
+    "observable_if_false": "A single client request still creates 2 transactions.",
+    "experiment_template": "disable_frontend_retry",
+    "status": "PENDING",
+    "evidence_file": null
+  },
+  {
+    "id": "H2",
+    "claim": "The duplicate is caused by service-layer retry behavior with no idempotency check.",
+    "causal_mechanism": "The service's retry loop (SERVICE_RETRY_ON_TIMEOUT) executes all configured attempts even after a successful charge, without checking if payment_id was already processed.",
+    "observable_if_true": "A single client request (no client retry) with SERVICE_RETRY_ON_TIMEOUT=1 creates 2 transactions.",
+    "observable_if_false": "Service retry disabled (SERVICE_RETRY_ON_TIMEOUT=0) and single request creates only 1 transaction.",
+    "experiment_template": "inject_backend_timeout",
+    "status": "PENDING",
+    "evidence_file": null
+  }
+]

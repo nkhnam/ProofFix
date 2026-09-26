@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EvidenceLedger",
+  "type": "object",
+  "required": [
+    "bug_report_summary",
+    "hypotheses",
+    "experiments",
+    "root_cause",
+    "patch_description",
+    "patch_file",
+    "regression_results",
+    "adversarial_results",
+    "final_verdict",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "bug_report_summary": {
+      "type": "string",
+      "description": "Short summary of the reported bug"
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "claim", "status"],
+        "properties": {
+          "id": {"type": "string"},
+          "claim": {"type": "string"},
+          "causal_mechanism": {"type": "string"},
+          "experiment_template": {"type": "string"},
+          "status": {"type": "string", "enum": ["PENDING", "FALSIFIED", "SUPPORTED"]},
+          "evidence_file": {"type": ["string", "null"]},
+          "evidence_summary": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "experiment_id": {"type": "string"},
+          "hypothesis_id": {"type": "string"},
+          "template_name": {"type": "string"},
+          "result": {"type": "string"},
+          "duplicate_count": {"type": "integer"},
+          "reason": {"type": "string"},
+          "timestamp": {"type": "string"}
+        }
+      }
+    },
+    "root_cause": {
+      "type": ["string", "null"],
+      "description": "Declared root cause after causal gate is satisfied"
+    },
+    "patch_description": {
+      "type": ["string", "null"],
+      "description": "Plain-English description of the fix applied"
+    },
+    "patch_file": {
+      "type": ["string", "null"],
+      "description": "Path to the patch file or patched source"
+    },
+    "regression_results": {
+      "type": ["object", "null"],
+      "description": "Results from running regression tests after patch"
+    },
+    "adversarial_results": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "properties": {
+          "test_id": {"type": "string"},
+          "category": {"type": "string"},
+          "result": {"type": "string", "enum": ["PASS", "FAIL"]},
+          "observed": {"type": "string"},
+          "expected": {"type": "string"},
+          "counterexample": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "final_verdict": {
+      "type": "string",
+      "enum": ["PENDING", "PATCH_VERIFIED", "PATCH_REJECTED"],
+      "description": "Final verification status"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

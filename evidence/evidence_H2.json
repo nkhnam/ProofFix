@@ -1,0 +1,35 @@
+{
+  "experiment_id": "inject_backend_timeout_05303f1d",
+  "hypothesis_id": "H2",
+  "template_name": "inject_backend_timeout",
+  "intervention": "SERVICE_RETRY_ON_TIMEOUT=1 \u2014 service retry loop executes multiple backend calls per request",
+  "baseline": "SERVICE_RETRY_ON_TIMEOUT=0 \u2014 service makes exactly one backend call per request",
+  "transactions_created": 2,
+  "duplicate_count": 1,
+  "retry_log_entries": [
+    "attempt 1: POST /charge payment_id=EXP-B-001",
+    "attempt 1: response status=200",
+    "attempt 2: POST /charge payment_id=EXP-B-001",
+    "attempt 2: response status=200"
+  ],
+  "backend_calls": 2,
+  "result": "SUPPORTED",
+  "reason": "H2 SUPPORTED: duplicate_count=1 from a SINGLE client request (no client retry). The service retry loop executed 2 backend calls, creating 2 transactions. Root cause: service/main.py process_payment() loop does not break after first successful charge \u2014 no idempotency check prevents duplicate transactions.",
+  "raw_evidence": [
+    {
+      "transaction_id": "3b188b22-eb44-4c3a-a60f-74506ea070ac",
+      "payment_id": "EXP-B-001",
+      "amount": 50.0,
+      "status": "charged",
+      "created_at": 1790403473.08556
+    },
+    {
+      "transaction_id": "6082c196-600b-42f5-97b0-bac2397fe0f7",
+      "payment_id": "EXP-B-001",
+      "amount": 50.0,
+      "status": "charged",
+      "created_at": 1790403473.0866024
+    }
+  ],
+  "timestamp": "2026-09-26T06:17:53.087140+00:00"
+}

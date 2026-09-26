@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AdversarialTestResult",
+  "type": "object",
+  "required": ["test_id", "test_name", "category", "result", "observed", "expected"],
+  "properties": {
+    "test_id": {
+      "type": "string",
+      "description": "Unique test identifier"
+    },
+    "test_name": {
+      "type": "string",
+      "description": "Human-readable test name"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["regression", "edge_cases", "concurrency", "idempotency"],
+      "description": "Test category"
+    },
+    "result": {
+      "type": "string",
+      "enum": ["PASS", "FAIL"],
+      "description": "Test outcome"
+    },
+    "observed": {
+      "type": "string",
+      "description": "What was actually observed"
+    },
+    "expected": {
+      "type": "string",
+      "description": "What was expected"
+    },
+    "counterexample": {
+      "type": ["string", "null"],
+      "description": "Concrete counterexample if the test failed"
+    },
+    "duration_ms": {
+      "type": "number",
+      "description": "Test duration in milliseconds"
+    }
+  },
+  "additionalProperties": false
+}

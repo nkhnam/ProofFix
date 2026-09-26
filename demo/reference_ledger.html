@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUG COURT — Evidence Ledger</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px;
+         line-height: 1.6; background: #f7f8fa; color: #1f2328; margin: 0; padding: 24px; }
+  .container { max-width: 960px; margin: 0 auto; background: #fff; border: 1px solid #e5e7eb;
+                border-radius: 6px; padding: 32px; }
+  h1 { font-size: 1.6em; margin: 0 0 4px; }
+  .subtitle { color: #57606a; margin: 0 0 32px; font-size: 0.95em; }
+  h2 { font-size: 1.1em; color: #1f2328; border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 6px; margin: 32px 0 16px; }
+  section { margin-bottom: 32px; }
+  .flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+           background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px;
+           padding: 16px 20px; margin-bottom: 24px; }
+  .flow-step { background: #3b82d4; color: #fff; padding: 4px 12px; border-radius: 3px;
+                font-size: 0.85em; font-weight: 600; }
+  .flow-arrow { color: #57606a; font-size: 1.1em; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+  th { background: #f7f8fa; text-align: left; padding: 10px; font-weight: 600;
+        border-bottom: 2px solid #e5e7eb; color: #57606a; font-size: 0.85em;
+        text-transform: uppercase; letter-spacing: 0.04em; }
+  tr:nth-child(even) { background: #f7f8fa; }
+  td { border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  .verdict-box { text-align: center; padding: 24px; border-radius: 6px;
+                  border: 2px solid #16a34a; margin-top: 32px; }
+  .verdict-label { font-size: 2em; font-weight: 700; color: #16a34a; }
+  .bug-box { background: #fff5f5; border: 1px solid #fecaca; border-radius: 6px;
+              padding: 16px; margin-bottom: 8px; }
+  .root-cause-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;
+                     padding: 16px; }
+  .patch-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;
+                padding: 16px; }
+  .footer { text-align: center; color: #57606a; font-size: 0.78em; margin-top: 40px;
+             padding-top: 16px; border-top: 1px solid #e5e7eb; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>BUG COURT — Evidence Ledger</h1>
+  <p class="subtitle">Scientific debugging audit trail &mdash; generated automatically</p>
+
+  <!-- Causal chain flow -->
+  <div class="flow">
+    <span class="flow-step">BUG</span>
+    <span class="flow-arrow">&#8594;</span>
+    <span class="flow-step">HYPOTHESES</span>
+    <span class="flow-arrow">&#8594;</span>
+    <span class="flow-step">EXPERIMENTS</span>
+    <span class="flow-arrow">&#8594;</span>
+    <span class="flow-step">EVIDENCE</span>
+    <span class="flow-arrow">&#8594;</span>
+    <span class="flow-step">FALSIFICATION</span>
+    <span class="flow-arrow">&#8594;</span>
+    <span class="flow-step">PATCH</span>
+    <span class="flow-arrow">&#8594;</span>
+    <span class="flow-step">ADVERSARIAL TESTS</span>
+    <span class="flow-arrow">&#8594;</span>
+    <span class="flow-step">PATCH_VERIFIED</span>
+  </div>
+
+  <!-- Bug Report -->
+  <section>
+    <h2>Bug Report</h2>
+    <div class="bug-box">
+      <strong>Symptom:</strong> POST /payment retry-induced duplicate payment bug.
+    </div>
+  </section>
+
+  <!-- Hypotheses -->
+  <section>
+    <h2>Competing Hypotheses</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Claim</th><th>Causal Mechanism</th><th>Experiment</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px;font-weight:600;">H1</td>
+          <td style="padding:10px;">The duplicate is caused by frontend/client retry behavior.</td>
+          <td style="padding:10px;">Client retries POST /payment with the same payment_id after a timeout. The service processes both requests independently.</td>
+          <td style="padding:10px;">disable_frontend_retry</td>
+          <td style="padding:10px;"><span style="background:#dc2626;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">FALSIFIED</span></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-weight:600;">H2</td>
+          <td style="padding:10px;">The duplicate is caused by service-layer retry behavior with no idempotency check.</td>
+          <td style="padding:10px;">The service's retry loop (SERVICE_RETRY_ON_TIMEOUT) executes all configured attempts even after a successful charge, without checking if payment_id was already processed.</td>
+          <td style="padding:10px;">inject_backend_timeout</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">SUPPORTED</span></td>
+        </tr></tbody>
+    </table>
+  </section>
+
+  <!-- Experiments -->
+  <section>
+    <h2>Controlled Experiments &amp; Evidence</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Experiment ID</th><th>Hyp.</th><th>Template</th>
+          <th>Txns Created</th><th>Duplicates</th><th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">disable_frontend_retry_003d48ab</td>
+          <td style="padding:10px;">H1</td>
+          <td style="padding:10px;">disable_frontend_retry</td>
+          <td style="padding:10px;">2</td>
+          <td style="padding:10px;">1</td>
+          <td style="padding:10px;"><span style="background:#dc2626;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">FALSIFIED</span></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">inject_backend_timeout_f24d129b</td>
+          <td style="padding:10px;">H2</td>
+          <td style="padding:10px;">inject_backend_timeout</td>
+          <td style="padding:10px;">2</td>
+          <td style="padding:10px;">1</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">SUPPORTED</span></td>
+        </tr></tbody>
+    </table>
+  </section>
+
+  <!-- Root Cause -->
+  <section>
+    <h2>Root Cause Conclusion</h2>
+    <div class="root-cause-box">
+      H2 CONFIRMED: The service-layer retry loop in process_payment() executes all configured retry attempts even after a successful charge, without checking for an existing transaction for the same payment_id. This is the root cause of duplicate payments. Client-side retry (H1) was experimentally excluded.
+    </div>
+  </section>
+
+  <!-- Patch -->
+  <section>
+    <h2>Applied Patch</h2>
+    <div class="patch-box">
+      Idempotency fix: (1) Check for existing transaction with same payment_id before charging. (2) Per-payment_id asyncio.Lock prevents TOCTOU race in concurrent requests. (3) Return after first successful charge — do not continue retry loop.
+    </div>
+  </section>
+
+  
+
+  <!-- Adversarial Tests -->
+  <section>
+    <h2>Adversarial Verification Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Test ID</th><th>Test Name</th><th>Category</th>
+          <th>Result</th><th>Observed</th><th>Counterexample</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-e75b62f6</td>
+          <td style="padding:10px;">test_concurrent_duplicate_requests_create_one_transaction</td>
+          <td style="padding:10px;">concurrency</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-47f00f89</td>
+          <td style="padding:10px;">test_concurrent_different_payments_both_succeed</td>
+          <td style="padding:10px;">concurrency</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-9090cba2</td>
+          <td style="padding:10px;">test_high_concurrency_duplicate_creates_one_transaction</td>
+          <td style="padding:10px;">concurrency</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-fef77bd7</td>
+          <td style="padding:10px;">test_zero_amount_payment_rejected</td>
+          <td style="padding:10px;">edge_cases</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-92e0afac</td>
+          <td style="padding:10px;">test_negative_amount_payment_rejected</td>
+          <td style="padding:10px;">edge_cases</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-104402b8</td>
+          <td style="padding:10px;">test_missing_payment_id_rejected</td>
+          <td style="padding:10px;">edge_cases</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-21ef29e9</td>
+          <td style="padding:10px;">test_missing_amount_rejected</td>
+          <td style="padding:10px;">edge_cases</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-406cab89</td>
+          <td style="padding:10px;">test_same_payment_id_five_retries_one_transaction</td>
+          <td style="padding:10px;">edge_cases</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-19151680</td>
+          <td style="padding:10px;">test_very_large_amount_accepted</td>
+          <td style="padding:10px;">edge_cases</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-9b990279</td>
+          <td style="padding:10px;">test_same_payment_id_twice_creates_one_transaction</td>
+          <td style="padding:10px;">idempotency</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-99159159</td>
+          <td style="padding:10px;">test_idempotency_both_responses_return_same_transaction_id</td>
+          <td style="padding:10px;">idempotency</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-edb88c13</td>
+          <td style="padding:10px;">test_different_payment_ids_are_independent</td>
+          <td style="padding:10px;">idempotency</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-5f37a3a4</td>
+          <td style="padding:10px;">test_idempotency_survives_service_retry_loop</td>
+          <td style="padding:10px;">idempotency</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-65c22402</td>
+          <td style="padding:10px;">test_original_bug_scenario_fixed</td>
+          <td style="padding:10px;">idempotency</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-34fc6f5f</td>
+          <td style="padding:10px;">test_normal_payment_creates_one_transaction</td>
+          <td style="padding:10px;">regression</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-f70605fa</td>
+          <td style="padding:10px;">test_different_payments_are_independent</td>
+          <td style="padding:10px;">regression</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr>
+        <tr>
+          <td style="padding:10px;font-family:monospace;font-size:0.85em;">ADV-a1542af0</td>
+          <td style="padding:10px;">test_payment_response_contains_transaction_id</td>
+          <td style="padding:10px;">regression</td>
+          <td style="padding:10px;"><span style="background:#16a34a;color:#fff;padding:2px 10px;border-radius:3px;font-weight:600;font-size:0.85em;">PASS</span></td>
+          <td style="padding:10px;">test passed</td>
+          <td style="padding:10px;color:#dc2626;"></td>
+        </tr></tbody>
+    </table>
+  </section>
+
+  <!-- Final Verdict -->
+  <div class="verdict-box">
+    <div class="verdict-label">PATCH_VERIFIED</div>
+    <p style="color:#57606a;margin:8px 0 0;">
+      All adversarial tests passed. The patch is verified.
+    </p>
+  </div>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>
