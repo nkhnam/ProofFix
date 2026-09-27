@@ -19,7 +19,7 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./service/Dockerfile
-    dockerContext: .
+    dockerContext: ./service
     healthCheckPath: /health
     envVars:
       - key: BACKEND_HOSTPORT
