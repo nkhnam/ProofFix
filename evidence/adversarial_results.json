@@ -1,172 +1,172 @@
 [
   {
-    "test_id": "ADV-861093e8",
+    "test_id": "ADV-5673d676",
     "test_name": "test_concurrent_duplicate_requests_create_one_transaction",
     "category": "concurrency",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.03
+    "duration_ms": 0.18
   },
   {
-    "test_id": "ADV-d26fb504",
+    "test_id": "ADV-888d9f30",
     "test_name": "test_concurrent_different_payments_both_succeed",
     "category": "concurrency",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.02
+    "duration_ms": 0.21
   },
   {
-    "test_id": "ADV-60a24f0a",
+    "test_id": "ADV-3ba33162",
     "test_name": "test_high_concurrency_duplicate_creates_one_transaction",
     "category": "concurrency",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.11
   },
   {
-    "test_id": "ADV-bb12f9ef",
+    "test_id": "ADV-088d27f3",
     "test_name": "test_zero_amount_payment_rejected",
     "category": "edge_cases",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.11
   },
   {
-    "test_id": "ADV-ea04d9ce",
+    "test_id": "ADV-fe478aa0",
     "test_name": "test_negative_amount_payment_rejected",
     "category": "edge_cases",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.02
+    "duration_ms": 0.55
   },
   {
-    "test_id": "ADV-c13cf802",
+    "test_id": "ADV-3a70cf42",
     "test_name": "test_missing_payment_id_rejected",
     "category": "edge_cases",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.25
   },
   {
-    "test_id": "ADV-402f448f",
+    "test_id": "ADV-2b1e55a8",
     "test_name": "test_missing_amount_rejected",
     "category": "edge_cases",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.04
+    "duration_ms": 0.11
   },
   {
-    "test_id": "ADV-11ee0cf8",
+    "test_id": "ADV-f01e96ce",
     "test_name": "test_same_payment_id_five_retries_one_transaction",
     "category": "edge_cases",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.11
   },
   {
-    "test_id": "ADV-87a3c309",
+    "test_id": "ADV-506174d9",
     "test_name": "test_very_large_amount_accepted",
     "category": "edge_cases",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.18
   },
   {
-    "test_id": "ADV-c4fce3ef",
+    "test_id": "ADV-a8b24c57",
     "test_name": "test_same_payment_id_twice_creates_one_transaction",
     "category": "idempotency",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.12
   },
   {
-    "test_id": "ADV-089f0646",
+    "test_id": "ADV-1dd4623c",
     "test_name": "test_idempotency_both_responses_return_same_transaction_id",
     "category": "idempotency",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.11
   },
   {
-    "test_id": "ADV-95eab1d3",
+    "test_id": "ADV-9d56bb5b",
     "test_name": "test_different_payment_ids_are_independent",
     "category": "idempotency",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.11
   },
   {
-    "test_id": "ADV-354d9d86",
+    "test_id": "ADV-3ce6b40b",
     "test_name": "test_idempotency_survives_service_retry_loop",
     "category": "idempotency",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.02
+    "duration_ms": 0.18
   },
   {
-    "test_id": "ADV-a7d5c6ca",
+    "test_id": "ADV-32e684f4",
     "test_name": "test_original_bug_scenario_fixed",
     "category": "idempotency",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.11
   },
   {
-    "test_id": "ADV-de7ed80f",
+    "test_id": "ADV-ac9cb9d6",
     "test_name": "test_normal_payment_creates_one_transaction",
     "category": "regression",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.1
   },
   {
-    "test_id": "ADV-b623b5eb",
+    "test_id": "ADV-f788ee27",
     "test_name": "test_different_payments_are_independent",
     "category": "regression",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.1
   },
   {
-    "test_id": "ADV-80131d2b",
+    "test_id": "ADV-bdacc655",
     "test_name": "test_payment_response_contains_transaction_id",
     "category": "regression",
     "result": "PASS",
     "observed": "test passed",
     "expected": "test should pass",
     "counterexample": null,
-    "duration_ms": 0.01
+    "duration_ms": 0.12
   }
 ]
