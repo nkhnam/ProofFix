@@ -16,12 +16,19 @@ import asyncio
 import uuid
 import httpx
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from service.db import store, Transaction
 from service import config
 
 app = FastAPI(title="Payment Service (patched)")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config.get_frontend_origins(),
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 
 # Per-payment_id locks to prevent concurrent TOCTOU races
 _payment_locks: dict[str, asyncio.Lock] = {}
@@ -55,6 +62,11 @@ async def _call_backend(payment_id: str, amount: float) -> httpx.Response:
             json={"payment_id": payment_id, "amount": amount},
             timeout=5.0,
         )
+
+
+@app.get("/health")
+def health() -> dict:
+    return {"status": "ok"}
 
 
 @app.post("/payment", response_model=PaymentResponse)

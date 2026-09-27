@@ -7,3 +7,6 @@ __pycache__/
 dist/
 build/
 ui/node_modules/
+ui/.next/
+ui/tsconfig.tsbuildinfo
+ui/next-env.d.ts

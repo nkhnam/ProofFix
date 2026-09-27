@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: prooffix-live-ui
+    runtime: node
+    rootDir: ui
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: prooffix-live-api
+          property: url
+
+  - type: web
+    name: prooffix-live-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: BACKEND_HOSTPORT
+        fromService:
+          type: web
+          name: prooffix-live-mock
+          property: hostport
+      - key: FRONTEND_ORIGIN
+        value: https://prooffix-live-ui.onrender.com
+      - key: SERVICE_RETRY_ON_TIMEOUT
+        value: "1"
+
+  - type: web
+    name: prooffix-live-mock
+    runtime: docker
+    plan: free
+    dockerfilePath: ./mock_backend/Dockerfile
+    dockerContext: ./mock_backend
+    healthCheckPath: /health
+    envVars:
+      - key: INJECT_TIMEOUT
+        value: "false"
