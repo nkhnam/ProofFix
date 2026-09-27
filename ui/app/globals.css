@@ -569,7 +569,7 @@ a:focus-visible {
   color: var(--accent);
 }
 
-+.repro-grid,
+.repro-grid,
 .diff-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -709,7 +709,7 @@ a:focus-visible {
   margin-top: 22px;
 }
 
-+.hypothesis-grid {
+.hypothesis-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
@@ -817,7 +817,7 @@ a:focus-visible {
   color: var(--success);
 }
 
-+.experiment-list {
+.experiment-list {
   display: grid;
   gap: 14px;
 }
@@ -876,7 +876,7 @@ a:focus-visible {
   margin-top: 5px;
 }
 
-+.root-cause {
+.root-cause {
   display: grid;
   gap: 8px;
   padding: 16px;
@@ -957,7 +957,7 @@ a:focus-visible {
   margin-left: auto;
 }
 
-+.attack-summary {
+.attack-summary {
   padding: 25px;
   border: 1px solid var(--border);
   background: #0e1518;
@@ -1054,7 +1054,7 @@ a:focus-visible {
   font-size: 9px;
 }
 
-+.verdict-stage {
+.verdict-stage {
   max-width: 850px;
   margin: 22px auto;
   text-align: center;
@@ -1135,7 +1135,7 @@ a:focus-visible {
   margin-top: 26px;
 }
 
-+.statusbar {
+.statusbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1275,7 +1275,7 @@ a:focus-visible {
   font: 16px Consolas, monospace;
 }
 
-+.fade-in {
+.fade-in {
   animation: fade-in .28s ease-out;
 }
 
@@ -1321,7 +1321,7 @@ a:focus-visible {
   }
 }
 
-+@media (max-width:900px) {
+@media (max-width:900px) {
   body {
     overflow: auto;
   }
@@ -1367,7 +1367,7 @@ a:focus-visible {
   }
 }
 
-+@media (max-width:700px) {
+@media (max-width:700px) {
   .topbar-meta {
     gap: 10px;
   }
