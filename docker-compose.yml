@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   mock-backend:
     build:
@@ -10,7 +8,7 @@ services:
     environment:
       - INJECT_TIMEOUT=${INJECT_TIMEOUT:-false}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
       interval: 2s
       timeout: 3s
       retries: 5
