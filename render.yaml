@@ -12,7 +12,7 @@ services:
         fromService:
           type: web
           name: prooffix-live-api
-          property: url
+          envVarKey: RENDER_EXTERNAL_URL
 
   - type: web
     name: prooffix-live-api
